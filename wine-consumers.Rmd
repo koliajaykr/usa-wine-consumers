@@ -1,0 +1,248 @@
+---
+title: "WICKED WINES"
+subtitle: Wine Buying Behaviour of US Consumers
+date: "23 Oct 2020 (updated on `r Sys.Date()`)"
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: 
+      collapsed: false
+---
+
+<!-- globle code chunk options -->
+
+```{r global-chunk-options, include=FALSE}
+knitr::opts_chunk$set(echo = F,
+                      warning = F,
+                      message = F,
+                      fig.retina = 3,
+                      dev = "svg")
+```
+
+<!-- all r packages used in this analysis -->
+
+```{r packages-used, include=FALSE}
+library(lubridate) # for now function
+library(tidyverse)
+library(skimr)
+library(visdat) # viz missing data
+library(sjPlot)
+library(hablar)
+```
+
+# An overview of data
+
+```{r import-data, echo=TRUE}
+library(readxl)
+wcons <- read_excel("data/Research_SPSS.xlsx")
+
+str(wcons)
+
+names(wcons)
+```
+
+## Rename the variables
+
+```{r rename}
+wcons <- wcons %>% 
+  rename(id = "Participant ID",
+         age = "Age",
+    adequate = "1",
+         irrelevant = "2",
+         interest = "3",
+         decision = "4",
+         care = "5",
+         choose = "6",
+         discount = "7",
+         think = "8",
+         status = "9",
+         read = "10",
+         color = "11",
+         aroma = "12",
+         course = "13",
+         positive = "14",
+         fairs = "15",
+         enjoy = "16",
+         image = "17",
+         indulge = "18",
+         benefit = "19",
+         type = "20",
+         easy = "21",
+         learn = "22",
+    pubspec = "23-Wine Spectator",
+    pubenth = "23-Wine Enthusiast",
+    pubadv = "23-Robert Parker's Wine Advocate",
+    pubfoo = "23-Food & Wine",
+    pubapp = "23-Bon Appetit",
+    pubdec = "23-Decantur",
+    sublist = "24",
+    ptrcd = "25-a",
+    pt90 = "25-b",
+    ptabs = "25-c",
+    ptatt = "25-d",
+    ptunf = "25-e",
+    chopt = "26-a",
+    chont = "26-b",
+    chofrds = "26-c",
+    chostrs = "26-d",
+    chorvw = "26-e",
+    chopub = "26-f",
+    choweb = "26-g",
+    chopro = "26-h",
+    wedu = "27",
+    crstas = "28-a",
+    crsuni = "28-b",
+    crsdin = "28-c",
+    crsweb = "28-d",
+    crssem = "28-e",
+    crsself = "28-f",
+    chonot = "29-a",
+    chopri = "29-b",
+    chopnt = "29-c",
+    choadv = "29-d",
+    chofrd = "29-e",
+    choind = "29-f",
+    chostr = "29-g",
+    chooth = "29-h",
+    consout = "30",        
+    spendout = "31",
+    conshm = "32",
+    spendhm = "33",
+    gender = "34",
+    marital = "35",
+    edu = "36",
+    ethnic = "37",
+    income = "38"
+    ) 
+
+names(wcons)
+```
+
+# Feeling towards wine
+
+```{r}
+wfeel <- wcons %>% 
+  select(3:24)
+
+names(wfeel)
+
+x <- wfeel %>% 
+  mutate(wfeel_score = adequate + irrelevant + interest +
+           decision + care + choose + discount + think + status + 
+           read + color + aroma + course + positive + fairs + 
+           enjoy + image + indulge + benefit + type + easy + learn) 
+skimr::skim(x)
+```
+
+# Level of enjoyment as per the wine brand
+
+```{r include=FALSE}
+round1 <- read_csv("data/round1.csv")
+
+names(round1)
+
+round1a <- round1 %>% 
+  select(participant1, brand1, enjoy1, drink1)
+
+names(round1a)
+
+round1a$enjoy1 <- as.factor(round1a$enjoy1)
+
+round1a$brand1 <- as.factor(round1a$brand1)
+
+round1a$drink1 <- as.factor(round1a$drink1)
+
+glimpse(round1a)
+```
+
+```{r}
+ggplot(round1a,
+       mapping = aes(y = enjoy1,
+                     fill = brand1,
+                     order = -as.numeric(brand1))) +
+  geom_bar(position = position_fill(reverse = TRUE)) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(title = "STUDY 1",
+    subtitle = "Level of wine enjoyment as per the brand",
+       caption = "",
+       x = "Percentage of participants as per the wine brand",
+       y = "Level of enjoyment",
+    fill = "Wine Brands") +
+  scale_fill_brewer(palette = "RdPu") +
+  scale_y_discrete(labels=c("1" = "Lowest 1", "5" = "Highest 5"))
+```
+
+```{r include=FALSE}
+round2 <- read_csv("data/round2.csv")
+
+names(round2)
+
+round2a <- round2 %>% 
+  select(participant2, brand2, enjoy2, drink2)
+
+names(round1a)
+
+round2a$enjoy2 <- as.factor(round2a$enjoy2)
+
+round2a$brand2 <- as.factor(round2a$brand2)
+
+round2a$drink2 <- as.factor(round2a$drink2)
+
+glimpse(round2a)
+```
+
+```{r}
+ggplot(round2a,
+       mapping = aes(y = enjoy2,
+                     fill = brand2,
+                     order = -as.numeric(brand2))) +
+  geom_bar(position = position_fill(reverse = TRUE)) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(title = "STUDY 2",
+    subtitle = "Level of wine enjoyment as per the brand",
+       caption = "",
+       x = "Percentage of participants as per the wine brand",
+       y = "Level of enjoyment",
+    fill = "Wine Brands") +
+  scale_fill_brewer(palette = "RdPu") +
+  scale_y_discrete(labels=c("1" = "Lowest 1", "5" = "Highest 5"))
+```
+
+```{r include=FALSE}
+round3 <- read_csv("data/round3.csv")
+
+names(round3)
+
+round3a <- round3 %>% 
+  select(participant3, brand3, enjoy3, drink3)
+
+names(round3a)
+
+round3a$enjoy3 <- as.factor(round3a$enjoy3)
+
+round3a$brand3 <- as.factor(round3a$brand3)
+
+round3a$drink3 <- as.factor(round3a$drink3)
+
+glimpse(round3a)
+```
+
+```{r}
+ggplot(round3a,
+       mapping = aes(y = enjoy3,
+                     fill = brand3,
+                     order = -as.numeric(brand3))) +
+  geom_bar(position = position_fill(reverse = TRUE)) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(title = "STUDY 3",
+    subtitle = "Level of wine enjoyment as per the brand",
+       caption = "",
+       x = "Percentage of participants as per the wine brand",
+       y = "Level of enjoyment",
+    fill = "Wine Brands") +
+  scale_fill_brewer(palette = "RdPu") +
+  scale_y_discrete(labels=c("1" = "Lowest 1", "5" = "Highest 5"))
+```

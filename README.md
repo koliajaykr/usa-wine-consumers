@@ -1,2 +1,4 @@
 # usa-wine-consumers
-I got this data analysis opportunity from one of my mentor. Thank you Dr. BG
+I got this opportunity for data analysis from one of my mentor. 
+
+Thank you Dr. BG
