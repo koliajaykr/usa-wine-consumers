@@ -150,7 +150,10 @@ x <- wfeel %>%
 ```
 
 ```{r plot-wfeel, fig.height=6.7, fig.cap="Consumer feelings toward wine and wine consumption"}
-set_theme(legend.pos = "bottom")
+set_theme(
+  legend.pos = "bottom",
+  base = theme_bw()
+          )
 
 sjPlot::plot_likert(
   wfeel,
@@ -193,25 +196,34 @@ round1a$drink1 <- as.factor(round1a$drink1)
 glimpse(round1a)
 ```
 
-```{r}
-ggplot(round1a,
-       mapping = aes(y = enjoy1,
-                     fill = brand1,
-                     order = -as.numeric(brand1))) +
-  geom_bar(position = position_fill(reverse = TRUE)) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  labs(title = "STUDY 1",
+```{r plot-round1}
+ggplot2::ggplot(
+  data = round1a,
+  mapping = aes(fill = brand1,
+                y = enjoy1)
+                ) +
+  geom_bar(
+    position = position_fill(reverse = TRUE) # percent stacked & to keep the colour order of bars & legend same
+  ) +
+  scale_fill_manual(
+    values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
+    labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
+  labs(
+    title = "STUDY 1",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
-       x = "Percentage of participants as per the wine brand",
+       x = "Percentage of participants",
        y = "Level of enjoyment",
-    fill = "Wine Brands") +
-  scale_fill_brewer(palette = "RdPu") +
-  scale_y_discrete(labels=c("1" = "Lowest 1", "5" = "Highest 5"))
+    fill = "Wine Brands:"
+    ) +
+  guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
+  scale_y_discrete(
+    labels=c("1" = "Lowest Enjoyed 1", "5" = "Highest Enjoyed 5")) 
 ```
 
-```{r include=FALSE}
+## Round 2
+
+```{r var2-type, include=FALSE}
 round2 <- read_csv("data/round2.csv")
 
 names(round2)
@@ -230,25 +242,34 @@ round2a$drink2 <- as.factor(round2a$drink2)
 glimpse(round2a)
 ```
 
-```{r}
-ggplot(round2a,
-       mapping = aes(y = enjoy2,
-                     fill = brand2,
-                     order = -as.numeric(brand2))) +
-  geom_bar(position = position_fill(reverse = TRUE)) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  labs(title = "STUDY 2",
+```{r plot-round2}
+ggplot2::ggplot(
+  data = round2a,
+  mapping = aes(fill = brand2,
+                y = enjoy2)
+                ) +
+  geom_bar(
+    position = position_fill(reverse = TRUE) # percent stacked & to keep the colour order of bars & legend same
+  ) +
+  scale_fill_manual(
+    values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
+    labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
+  labs(
+    title = "STUDY 2",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
-       x = "Percentage of participants as per the wine brand",
+       x = "Percentage of participants",
        y = "Level of enjoyment",
-    fill = "Wine Brands") +
-  scale_fill_brewer(palette = "RdPu") +
-  scale_y_discrete(labels=c("1" = "Lowest 1", "5" = "Highest 5"))
+    fill = "Wine Brands:"
+    ) +
+  guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
+  scale_y_discrete(
+    labels=c("1" = "Lowest Enjoyed 1", "5" = "Highest Enjoyed 5")) 
 ```
 
-```{r include=FALSE}
+## Round 3
+
+```{r var3-type, include=FALSE}
 round3 <- read_csv("data/round3.csv")
 
 names(round3)
@@ -267,20 +288,27 @@ round3a$drink3 <- as.factor(round3a$drink3)
 glimpse(round3a)
 ```
 
-```{r}
-ggplot(round3a,
-       mapping = aes(y = enjoy3,
-                     fill = brand3,
-                     order = -as.numeric(brand3))) +
-  geom_bar(position = position_fill(reverse = TRUE)) +
-  theme_minimal() +
-  theme(legend.position = "bottom") +
-  labs(title = "STUDY 3",
+```{r plot-round13}
+ggplot2::ggplot(
+  data = round3a,
+  mapping = aes(fill = brand3,
+                y = enjoy3)
+                ) +
+  geom_bar(
+    position = position_fill(reverse = TRUE) # percent stacked & to keep the colour order of bars & legend same
+  ) +
+  scale_fill_manual(
+    values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
+    labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
+  labs(
+    title = "STUDY 3",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
-       x = "Percentage of participants as per the wine brand",
+       x = "Percentage of participants",
        y = "Level of enjoyment",
-    fill = "Wine Brands") +
-  scale_fill_brewer(palette = "RdPu") +
-  scale_y_discrete(labels=c("1" = "Lowest 1", "5" = "Highest 5"))
+    fill = "Wine Brands:"
+    ) +
+  guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
+  scale_y_discrete(
+    labels=c("1" = "Lowest Enjoyed 1", "5" = "Highest Enjoyed 5")) 
 ```
