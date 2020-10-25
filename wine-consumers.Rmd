@@ -3,11 +3,13 @@ title: "WICKED WINES"
 subtitle: Wine Buying Behaviour of US Consumers
 date: "23 Oct 2020 (updated on `r Sys.Date()`)"
 output:
-  bookdown::html_document2:
+  bookdown::pdf_document2:
     toc: true
     toc_float: 
       collapsed: false
 ---
+
+\newpage
 
 <!-- globle code chunk options -->
 
@@ -15,8 +17,9 @@ output:
 knitr::opts_chunk$set(echo = F,
                       warning = F,
                       message = F,
-                      fig.retina = 3,
-                      dev = "svg")
+                      fig.retina = 3
+                    #  dev = "svg"
+                    )
 ```
 
 <!-- all r packages used in this analysis -->
@@ -28,20 +31,22 @@ library(skimr)
 library(visdat) # viz missing data
 library(sjPlot)
 library(hablar)
+library(tinytex)
 ```
 
-# An overview of data
+# Wine Consumer Feelings Data
 
-```{r import-data, echo=TRUE}
+## An overview of data
+
+```{r import-data}
 library(readxl)
 wcons <- read_excel("data/Research_SPSS.xlsx")
 
-str(wcons)
+tibble::glimpse(wcons)
 
-names(wcons)
 ```
 
-## Rename the variables
+## Variables renamed
 
 ```{r rename}
 wcons <- wcons %>% 
@@ -118,21 +123,54 @@ wcons <- wcons %>%
 names(wcons)
 ```
 
-# Feeling towards wine
+\newpage
 
-```{r}
+## Missing values
+
+```{r plot-missing, fig.cap="Pattern of missing values"}
+visdat::vis_miss(wcons)
+```
+
+\newpage
+
+## Consumer feeling toward wine tasting
+
+```{r wfeel-var}
 wfeel <- wcons %>% 
   select(3:24)
 
-names(wfeel)
+#names(wfeel)
 
 x <- wfeel %>% 
   mutate(wfeel_score = adequate + irrelevant + interest +
-           decision + care + choose + discount + think + status + 
-           read + color + aroma + course + positive + fairs + 
+           decision + care + choose + discount + think + status + read + color + aroma + course + positive + fairs + 
            enjoy + image + indulge + benefit + type + easy + learn) 
-skimr::skim(x)
+
+
 ```
+
+```{r plot-wfeel, fig.height=6.7, fig.cap="Consumer feelings toward wine and wine consumption"}
+set_theme(legend.pos = "bottom")
+
+sjPlot::plot_likert(
+  wfeel,
+  grid.range = c(1.8, 1),
+  expand.grid = F,
+  values = "sum.outside",
+  show.prc.sign = TRUE,
+  geom.colors = "RdPu",
+  legend.pos = c("bottom"),
+  #title = "Consumer feelings toward wine and wine consumption",
+  legend.labels = c(" 1 Definitely not me", "2", "3 Neutral", "4", "5 Totally me"),
+  cat.neutral = 3,
+  reverse.scale = TRUE,
+  group.legend.options = list(nrow = 2),
+  show.n = F,
+  ) 
+  
+```
+
+\newpage
 
 # Level of enjoyment as per the wine brand
 
