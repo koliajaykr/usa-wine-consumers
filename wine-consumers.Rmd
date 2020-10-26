@@ -214,7 +214,7 @@ ggplot2::ggplot(
     values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
     labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
   labs(
-    title = "STUDY 1",
+    title = "ROUND1 1",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
        x = "Percentage of participants",
@@ -260,7 +260,7 @@ ggplot2::ggplot(
     values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
     labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
   labs(
-    title = "STUDY 2",
+    title = "ROUND 2",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
        x = "Percentage of participants",
@@ -306,7 +306,7 @@ ggplot2::ggplot(
     values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
     labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
   labs(
-    title = "STUDY 3",
+    title = "ROUND 3",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
        x = "Percentage of participants",
@@ -324,7 +324,7 @@ ggplot2::ggplot(
 
 Pearson's **chi-square test** is used to find the correlation between the level of wine enjoyment and consumer's intention to re-drink the same wine.
 
-## Study 1
+## Round 1
 
 ```{r}
 round1a %>% 
@@ -341,7 +341,7 @@ test1 <- chisq.test(table(round1a$enjoy1, round1a$drink1))
 test1
 ```
 
-## Study 2
+## Round 2
 
 ```{r}
 round2a %>% 
@@ -358,7 +358,7 @@ test2 <- chisq.test(table(round2a$enjoy2, round2a$drink2))
 test2
 ```
 
-## Study 3
+## Round 3
 
 ```{r}
 round3a %>% 
@@ -381,7 +381,8 @@ test3
 
 This will help us to understand for which brand which particular attribute is playing a major role in the higher or lower wine enjoyment score.
 
-```{r data-transf}
+```{r round1-data-long, include=FALSE}
+# roud 1 data
 names(round1)
 
 glimpse(round1)
@@ -401,29 +402,160 @@ glimpse(round1)
 
 round1_long <- gather(
   round1,
-  feature,
-  cond,
+  feature1,
+  cond1,
   "Tannin:Low":"Alcohol Level:High",
   factor_key = TRUE
 )
 
-# long data
-round1_long
+round1_long$cond1 <- as.factor(round1_long$cond1)
 
-round1_long$cond <- as.factor(round1_long$cond)
+# long data
+glimpse(round1_long)
+
+table(round1_long$feature1, round1_long$cond1)
 ```
+
+```{r round2-data-long, include=FALSE}
+# roud 2 data
+names(round2)
+
+glimpse(round2)
+
+# variable dbl to factors
+round2$participant2 <- as.factor(round2$participant2)
+
+round2$enjoy2 <- as.factor(round2$enjoy2)
+
+round2$brand2 <- as.factor(round2$brand2)
+
+round2$drink2 <- as.factor(round2$drink2)
+
+glimpse(round2)
+
+# from wide to long data
+
+round2_long <- gather(
+  round2,
+  feature2,
+  cond2,
+  "Tannin:Low":"Alcohol Level:High",
+  factor_key = TRUE
+)
+
+round2_long$cond2 <- as.factor(round2_long$cond2)
+
+# long data
+glimpse(round2_long)
+
+table(round2_long$feature2, round2_long$cond2)
+```
+
+```{r round3-data-long, include=FALSE}
+# roud 1 data
+names(round3)
+
+glimpse(round3)
+
+# variable dbl to factors
+round3$participant3 <- as.factor(round3$participant3)
+
+round1$enjoy3 <- as.factor(round3$enjoy3)
+
+round3$brand3 <- as.factor(round3$brand3)
+
+round3$drink3 <- as.factor(round3$drink3)
+
+glimpse(round3)
+
+# from wide to long data
+
+round3_long <- gather(
+  round3,
+  feature3,
+  cond3,
+  "Tannin:Low":"Alcohol Level:High",
+  factor_key = TRUE
+)
+
+round3_long$cond3 <- as.factor(round3_long$cond3)
+
+# long data
+glimpse(round3_long)
+
+table(round3_long$feature3, round3_long$cond3)
+```
+
+\newpage
 
 ## The most desired wine feature
 
-```{r}
+```{r plot-round2-long}
 round1_long %>% 
+  
   ggplot2::ggplot(aes(
-    y = feature,
-    fill = cond
+    y = feature1,
+    fill = cond1
   )) +
-  geom_bar(position = position_fill(reverse = TRUE)) +
+  geom_bar() +
+  guides(fill = guide_legend(reverse=TRUE)) +
   scale_fill_manual(
     values = c("pink", "maroon4"), 
-    labels=c("Not desired", "Desired"))
+    labels=c("Not Desired", "Desired")) + 
+  labs(
+    title = "ROUND 1",
+    subtitle = "",
+       caption = "",
+       x = "Frequency",
+       y = "Wine Attributes",
+    fill = "Features:"
+    ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
 ```
 
+```{r plot-round1-long}
+round2_long %>% 
+  ggplot2::ggplot(aes(
+    y = feature2,
+    fill = cond2
+  )) +
+  geom_bar() +
+  guides(fill = guide_legend(reverse=TRUE)) +
+  scale_fill_manual(
+    values = c("pink", "maroon4"), 
+    labels=c("Not Desired", "Desired")) + 
+  labs(
+    title = "ROUND 2",
+    subtitle = "",
+       caption = "",
+       x = "Frequency",
+       y = "Wine Attributes",
+    fill = "Features:"
+    ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+```{r plot-round3-long}
+round3_long %>% 
+  ggplot2::ggplot(aes(
+    y = feature3,
+    fill = cond3
+  )) +
+  geom_bar() +
+  guides(fill = guide_legend(reverse=TRUE)) +
+  scale_fill_manual(
+    values = c("pink", "maroon4"), 
+    labels=c("Not Desired", "Desired")) + 
+  labs(
+    title = "ROUND 3",
+    subtitle = "",
+       caption = "",
+       x = "Frequency",
+       y = "Wine Attributes",
+    fill = "Features:"
+    ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
