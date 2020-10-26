@@ -425,7 +425,9 @@ glimpse(round3_long)
 table(round3_long$feature3, round3_long$cond3)
 ```
 
-```{r plot-round2-long}
+## Round 1
+
+```{r plot-round1-long}
 round1_long %>% 
   
   ggplot2::ggplot(aes(
@@ -439,7 +441,7 @@ round1_long %>%
     labels=c("Not Desired", "Desired")) + 
   labs(
     title = "ROUND 1",
-    subtitle = "",
+    subtitle = "Features desired in wine",
        caption = "",
        x = "Frequency",
        y = "Wine Attributes",
@@ -449,7 +451,9 @@ round1_long %>%
   theme(legend.position = "bottom")
 ```
 
-```{r plot-round1-long}
+## Round 2
+
+```{r plot-round2-long}
 round2_long %>% 
   ggplot2::ggplot(aes(
     y = feature2,
@@ -462,7 +466,7 @@ round2_long %>%
     labels=c("Not Desired", "Desired")) + 
   labs(
     title = "ROUND 2",
-    subtitle = "",
+    subtitle = "Features desired in wine",
        caption = "",
        x = "Frequency",
        y = "Wine Attributes",
@@ -471,6 +475,8 @@ round2_long %>%
   theme_bw() +
   theme(legend.position = "bottom")
 ```
+
+## Round 3
 
 ```{r plot-round3-long}
 round3_long %>% 
@@ -485,7 +491,7 @@ round3_long %>%
     labels=c("Not Desired", "Desired")) + 
   labs(
     title = "ROUND 3",
-    subtitle = "",
+    subtitle = "Features desired in wine",
        caption = "",
        x = "Frequency",
        y = "Wine Attributes",
@@ -532,9 +538,9 @@ test6 <- chisq.test(table(round3a$brand3, round3a$enjoy3))
 test6
 ```
 
-In three different studies how consumer's level of wine enjoyment related with their intention to re-drink the same wine?
+<!-- In three different studies how consumer's level of wine enjoyment related with their intention to re-drink the same wine? -->
 
-Pearson's **chi-square test** is used to find the correlation between the level of wine enjoyment and consumer's intention to re-drink the same wine.
+<!-- Pearson's **chi-square test** is used to find the correlation between the level of wine enjoyment and consumer's intention to re-drink the same wine. -->
 
 ## Enjoy and Re-drink
 
