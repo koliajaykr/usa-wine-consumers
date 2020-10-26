@@ -7,6 +7,9 @@ output:
     toc: true
     toc_float: 
       collapsed: false
+toccolor: blue
+urlcolor: blue
+linkcolor: blue
 ---
 
 \newpage
@@ -371,3 +374,56 @@ test3 <- chisq.test(table(round3a$enjoy3, round3a$drink3))
 
 test3
 ```
+
+\newpage
+
+# Relationship between the levels of wine attributes and consumer's wine enjoyment score.
+
+This will help us to understand for which brand which particular attribute is playing a major role in the higher or lower wine enjoyment score.
+
+```{r data-transf}
+names(round1)
+
+glimpse(round1)
+
+# variable dbl to factors
+round1$participant1 <- as.factor(round1$participant1)
+
+round1$enjoy1 <- as.factor(round1$enjoy1)
+
+round1$brand1 <- as.factor(round1$brand1)
+
+round1$drink1 <- as.factor(round1$drink1)
+
+glimpse(round1)
+
+# from wide to long data
+
+round1_long <- gather(
+  round1,
+  feature,
+  cond,
+  "Tannin:Low":"Alcohol Level:High",
+  factor_key = TRUE
+)
+
+# long data
+round1_long
+
+round1_long$cond <- as.factor(round1_long$cond)
+```
+
+## The most desired wine feature
+
+```{r}
+round1_long %>% 
+  ggplot2::ggplot(aes(
+    y = feature,
+    fill = cond
+  )) +
+  geom_bar(position = position_fill(reverse = TRUE)) +
+  scale_fill_manual(
+    values = c("pink", "maroon4"), 
+    labels=c("Not desired", "Desired"))
+```
+
