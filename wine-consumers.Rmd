@@ -177,7 +177,9 @@ sjPlot::plot_likert(
 
 # Level of enjoyment as per the wine brand
 
-```{r include=FALSE}
+## Round 1
+
+```{r types-round1, include=FALSE}
 round1 <- read_csv("data/round1.csv")
 
 names(round1)
@@ -223,7 +225,7 @@ ggplot2::ggplot(
 
 ## Round 2
 
-```{r var2-type, include=FALSE}
+```{r types-round2, include=FALSE}
 round2 <- read_csv("data/round2.csv")
 
 names(round2)
@@ -269,7 +271,7 @@ ggplot2::ggplot(
 
 ## Round 3
 
-```{r var3-type, include=FALSE}
+```{r types-round3, include=FALSE}
 round3 <- read_csv("data/round3.csv")
 
 names(round3)
@@ -311,4 +313,61 @@ ggplot2::ggplot(
   guides(fill=guide_legend(nrow=2,byrow=TRUE)) +
   scale_y_discrete(
     labels=c("1" = "Lowest Enjoyed 1", "5" = "Highest Enjoyed 5")) 
+```
+
+\newpage
+
+# In three different studies how consumer's level of wine enjoyment related with their intention to re-drink the same wine?
+
+Pearson's **chi-square test** is used to find the correlation between the level of wine enjoyment and consumer's intention to re-drink the same wine.
+
+## Study 1
+
+```{r}
+round1a %>% 
+  names()
+
+table(round1a$enjoy1)
+
+table(round1a$drink1)
+
+table(round1a$enjoy1, round1a$drink1)
+
+test1 <- chisq.test(table(round1a$enjoy1, round1a$drink1))
+
+test1
+```
+
+## Study 2
+
+```{r}
+round2a %>% 
+  names()
+
+table(round2a$enjoy2)
+
+table(round2a$drink2)
+
+table(round2a$enjoy2, round2a$drink2)
+
+test2 <- chisq.test(table(round2a$enjoy2, round2a$drink2))
+
+test2
+```
+
+## Study 3
+
+```{r}
+round3a %>% 
+  names()
+
+table(round3a$enjoy3)
+
+table(round3a$drink2)
+
+table(round3a$enjoy3, round3a$drink3)
+
+test3 <- chisq.test(table(round3a$enjoy3, round3a$drink3))
+
+test3
 ```
