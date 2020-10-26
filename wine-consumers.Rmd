@@ -37,21 +37,19 @@ library(hablar)
 library(tinytex)
 ```
 
-# Wine Consumer Feelings Data
+# Data1: Consumer feelings toward wine
 
-## An overview of data
-
-```{r import-data}
+```{r import-data, include=FALSE}
+## Import data
 library(readxl)
 wcons <- read_excel("data/Research_SPSS.xlsx")
 
-tibble::glimpse(wcons)
-
+#tibble::glimpse(wcons)
 ```
 
-## Variables renamed
+<!-- ## Variables renamed -->
 
-```{r rename}
+```{r rename, include=FALSE}
 wcons <- wcons %>% 
   rename(id = "Participant ID",
          age = "Age",
@@ -126,8 +124,6 @@ wcons <- wcons %>%
 names(wcons)
 ```
 
-\newpage
-
 ## Missing values
 
 ```{r plot-missing, fig.cap="Pattern of missing values"}
@@ -136,7 +132,7 @@ visdat::vis_miss(wcons)
 
 \newpage
 
-## Consumer feeling toward wine tasting
+## Consumer feelings toward wine
 
 ```{r wfeel-var}
 wfeel <- wcons %>% 
@@ -178,7 +174,7 @@ sjPlot::plot_likert(
 
 \newpage
 
-# Level of enjoyment as per the wine brand
+# Influence of brand on wine enjoyment
 
 ## Round 1
 
@@ -320,64 +316,7 @@ ggplot2::ggplot(
 
 \newpage
 
-# In three different studies how consumer's level of wine enjoyment related with their intention to re-drink the same wine?
-
-Pearson's **chi-square test** is used to find the correlation between the level of wine enjoyment and consumer's intention to re-drink the same wine.
-
-## Round 1
-
-```{r}
-round1a %>% 
-  names()
-
-table(round1a$enjoy1)
-
-table(round1a$drink1)
-
-table(round1a$enjoy1, round1a$drink1)
-
-test1 <- chisq.test(table(round1a$enjoy1, round1a$drink1))
-
-test1
-```
-
-## Round 2
-
-```{r}
-round2a %>% 
-  names()
-
-table(round2a$enjoy2)
-
-table(round2a$drink2)
-
-table(round2a$enjoy2, round2a$drink2)
-
-test2 <- chisq.test(table(round2a$enjoy2, round2a$drink2))
-
-test2
-```
-
-## Round 3
-
-```{r}
-round3a %>% 
-  names()
-
-table(round3a$enjoy3)
-
-table(round3a$drink2)
-
-table(round3a$enjoy3, round3a$drink3)
-
-test3 <- chisq.test(table(round3a$enjoy3, round3a$drink3))
-
-test3
-```
-
-\newpage
-
-# Relationship between the levels of wine attributes and consumer's wine enjoyment score.
+# Desired wine feature
 
 This will help us to understand for which brand which particular attribute is playing a major role in the higher or lower wine enjoyment score.
 
@@ -486,10 +425,6 @@ glimpse(round3_long)
 table(round3_long$feature3, round3_long$cond3)
 ```
 
-\newpage
-
-## The most desired wine feature
-
 ```{r plot-round2-long}
 round1_long %>% 
   
@@ -558,4 +493,98 @@ round3_long %>%
     ) +
   theme_bw() +
   theme(legend.position = "bottom")
+```
+
+# Chi square tests
+
+## Brand and Enjoyment
+
+### Round 1
+
+```{r chi-test-round1}
+# uncomment it to see table
+#table(round1a$brand1, round1a$enjoy1)
+
+test4 <- chisq.test(table(round1a$brand1, round1a$enjoy1))
+
+test4
+```
+
+### Round 2
+
+```{r chi-test-round2}
+# uncomment it to see table
+# table(round2a$brand2, round2a$enjoy2)
+
+test5 <- chisq.test(table(round2a$brand2, round2a$enjoy2))
+
+test5
+```
+
+### Round 3
+
+```{r chi-test-round3}
+# uncomment it to see table
+#table(round3a$brand3, round3a$enjoy3)
+
+test6 <- chisq.test(table(round3a$brand3, round3a$enjoy3))
+
+test6
+```
+
+In three different studies how consumer's level of wine enjoyment related with their intention to re-drink the same wine?
+
+Pearson's **chi-square test** is used to find the correlation between the level of wine enjoyment and consumer's intention to re-drink the same wine.
+
+## Enjoy and Re-drink
+
+### Round 1
+
+```{r}
+#round1a %>% 
+#  names()
+
+#table(round1a$enjoy1)
+
+#table(round1a$drink1)
+
+#table(round1a$enjoy1, round1a$drink1)
+
+test1 <- chisq.test(table(round1a$enjoy1, round1a$drink1))
+
+test1
+```
+
+### Round 2
+
+```{r}
+#round2a %>% 
+#  names()
+
+#table(round2a$enjoy2)
+
+#table(round2a$drink2)
+
+#table(round2a$enjoy2, round2a$drink2)
+
+test2 <- chisq.test(table(round2a$enjoy2, round2a$drink2))
+
+test2
+```
+
+### Round 3
+
+```{r}
+#round3a %>% 
+#  names()
+
+#table(round3a$enjoy3)
+
+#table(round3a$drink2)
+
+#table(round3a$enjoy3, round3a$drink3)
+
+test3 <- chisq.test(table(round3a$enjoy3, round3a$drink3))
+
+test3
 ```
