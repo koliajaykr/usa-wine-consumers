@@ -1,6 +1,11 @@
 ---
 title: "WICKED WINES"
 subtitle: Wine Buying Behaviour of US Consumers
+header-includes:
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \usepackage{makecell}
 date: "23 Oct 2020 (updated on `r Sys.Date()`)"
 output:
   bookdown::pdf_document2:
@@ -33,6 +38,8 @@ library(tidyverse)
 library(skimr)
 library(visdat) # viz missing data
 library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
 library(hablar)
 library(tinytex)
 ```
@@ -191,10 +198,37 @@ names(round1a)
 round1a$enjoy1 <- as.factor(round1a$enjoy1)
 
 round1a$brand1 <- as.factor(round1a$brand1)
+levels(round1a$brand1) <- c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")
 
 round1a$drink1 <- as.factor(round1a$drink1)
 
 glimpse(round1a)
+```
+
+```{r tab-round1}
+by_brand <- round1a %>% 
+  group_by(brand1)
+
+#by_brand
+
+library(kableExtra)
+
+by_brand %>% 
+  count(enjoy1) %>% 
+  kbl("latex",
+      caption = "Wine Tasting as per brands - Round 1",
+    booktabs = T,
+      escape = F,
+      linesep = "",
+      col.names = linebreak(c("Wine Brand",
+                    "Level of \n Enjoyment \n(Round 1)",
+                    "Number of \n participlants \n(n = 15)")),
+                     align = "c") %>% 
+  kable_styling() %>% 
+  footnote(general = "Scarecrow ($750, 100 points), Materium ($450, 100 points), Kapscandy($450, 100 points) are costly and high rated wine brand; Hook or Crook ($25) & Precision ($25) are low cost and lower rating wine brands.",
+           threeparttable = T
+)
+
 ```
 
 ```{r plot-round1}
@@ -210,7 +244,7 @@ ggplot2::ggplot(
     values = c("maroon4", "pink", "maroon2", "pink", "maroon2"), 
     labels=c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")) +
   labs(
-    title = "ROUND1 1",
+    title = "ROUND 1",
     subtitle = "Level of wine enjoyment as per the brand",
        caption = "",
        x = "Percentage of participants",
@@ -237,11 +271,39 @@ names(round1a)
 round2a$enjoy2 <- as.factor(round2a$enjoy2)
 
 round2a$brand2 <- as.factor(round2a$brand2)
+levels(round2a$brand2) <- c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")
 
 round2a$drink2 <- as.factor(round2a$drink2)
 
 glimpse(round2a)
 ```
+
+```{r tab-round2}
+by_brand2 <- round2a %>% 
+  group_by(brand2)
+
+#by_brand2
+
+#library(kableExtra)
+
+by_brand2 %>% 
+  count(enjoy2) %>% 
+  kbl("latex",
+      caption = "Wine Tasting as per brands - Round 2",
+    booktabs = T,
+      escape = F,
+      linesep = "",
+      col.names = linebreak(c("Wine Brand",
+                    "Level of \n Enjoyment \n(Round 2)",
+                    "Number of \n participlants \n(n = 15)")),
+                     align = "c") %>% 
+  kable_styling() %>% 
+  footnote(general = "Scarecrow ($750, 100 points), Materium ($450, 100 points), Kapscandy($450, 100 points) are costly and high rated wine brand; Hook or Crook ($25) & Precision ($25) are low cost and lower rating wine brands.",
+           threeparttable = T
+)
+
+```
+
 
 ```{r plot-round2}
 ggplot2::ggplot(
@@ -283,11 +345,39 @@ names(round3a)
 round3a$enjoy3 <- as.factor(round3a$enjoy3)
 
 round3a$brand3 <- as.factor(round3a$brand3)
+levels(round3a$brand3) <- c("Scarecrow", "Hook or Crook", "Materium", "Precision", "Kapscandy")
 
 round3a$drink3 <- as.factor(round3a$drink3)
 
 glimpse(round3a)
 ```
+
+```{r tab-round3}
+by_brand3 <- round3a %>% 
+  group_by(brand3)
+
+#by_brand
+
+#library(kableExtra)
+
+by_brand3 %>% 
+  count(enjoy3) %>% 
+  kbl("latex",
+      caption = "Wine Tasting as per brands - Round 3",
+    booktabs = T,
+      escape = F,
+      linesep = "",
+      col.names = linebreak(c("Wine Brand",
+                    "Level of \n Enjoyment \n(Round 3)",
+                    "Number of \n participlants \n(n = 15)")),
+                     align = "c") %>% 
+  kable_styling() %>% 
+  footnote(general = "Scarecrow ($750, 100 points), Materium ($450, 100 points), Kapscandy($450, 100 points) are costly and high rated wine brand; Hook or Crook ($25) & Precision ($25) are low cost and lower rating wine brands.",
+           threeparttable = T
+)
+
+```
+
 
 ```{r plot-round13}
 ggplot2::ggplot(
@@ -594,3 +684,329 @@ test3 <- chisq.test(table(round3a$enjoy3, round3a$drink3))
 
 test3
 ```
+
+\newpage
+\blandscape
+
+# Correlation Matrix
+
+```{r import-regress-data}
+regress1 <- read_csv("data/regress.csv")
+
+#glimpse(regress1)
+```
+
+```{r corr-plot, fig.cap="Correlation Matrix", fig.width=9 }
+regress1 %>% 
+  select(-c(participant, study, age, brand)) %>% 
+  cor() %>% 
+  sjp.corr(show.legend = TRUE,
+           show.p = T)
+```
+\elandscape
+\newpage
+
+# Regression Model
+
+## Influence of wine chemical on wine enjoyment
+
+```{r reg-model, caption = "Regression model", eval=FALSE}
+m1 <- lm(enjoyment ~ Brix +	ABV +	TA +	pH, data = regress1)
+
+m2 <- lm(enjoyment ~ RRSugars +	Anthocyanins +	Phenolics, data = regress1)
+
+tab_model(m1, m2)
+```
+
+```{r}
+knitr::include_graphics("image/reg-table.png")
+```
+
+# Profile descriptives
+
+```{r}
+profiled <- read_csv("data/profile.csv")
+
+#glimpse(profiled)
+```
+
+## Wine drinking frequency
+
+```{r}
+plot_drinkout <- profiled %>% 
+  count(drinkout) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(drinkout, n)
+    )) +
+  geom_col(stat="identity",
+           fill = "maroon") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Drinking wine at bars",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17))
+
+plot_drinkhm <- profiled %>% 
+  count(drinkhm) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(drinkhm, n)
+    )) +
+  geom_col(stat="identity",
+           fill = "maroon") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Drinking wine at home",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17))
+
+```
+
+```{r out.width="50%"}
+library(patchwork)
+
+plot_drinkout  
+
+plot_drinkhm
+```
+
+## Money spend on wine
+
+```{r}
+plot_spendout <- profiled %>% 
+  count(spendout) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(spendout, n)
+    )) +
+  geom_col(stat="identity",
+           fill = "#85bb65") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Money spend on wine at bars",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17))
+
+plot_spendhm <- profiled %>% 
+  count(spendhm) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(spendhm, n)
+    )) +
+  geom_col(stat="identity",
+           fill = "#85bb65") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Money spend on wine at home",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17))
+```
+
+```{r out.width="50%"}
+library(patchwork)
+
+plot_spendout  
+
+plot_spendhm
+```
+
+## Socio-economic profile
+
+```{r}
+plot_sex <- profiled %>% 
+  count(sex) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(sex, n),
+    fill = sex
+    )) +
+  geom_col(stat="identity",
+           width = 0.4) +
+  scale_fill_brewer(palette = "Dark2") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Sex of study participants",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17))
+
+# edu plot
+plot_age <- profiled %>% 
+  ggplot2::ggplot(aes(x = age)) +
+  geom_histogram(
+    fill = "pink",
+    color = "purple",
+    size = 2
+  ) +
+  labs(
+    title = "Age of study participants",
+    x = "Age",
+    y = "Frequency"
+  )
+```
+
+```{r out.width="50%"}
+plot_sex
+
+plot_age
+```
+
+<!-- edu and marital -->
+
+```{r}
+plot_edu <- profiled %>% 
+  count(edu) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(edu, n),
+    fill = edu
+    )) +
+  geom_col(stat="identity") +
+  scale_fill_brewer(palette = "Set2") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Educational background",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17)) +
+  theme(legend.position = "none")
+
+plot_marital <- profiled %>% 
+  count(marital) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(marital, n),
+           fill = marital
+    )) +
+  geom_col(stat="identity") +
+  scale_fill_brewer(palette = "Set1") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Marital Status",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17)) +
+  theme(legend.position = "none")
+```
+
+```{r out.width="50%"}
+plot_edu
+
+plot_marital
+```
+
+
+<!-- income and ethnic -->
+
+```{r}
+plot_income <- profiled %>% 
+  count(income) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(income, n),
+    fill = income
+    )) +
+  geom_col(stat="identity") +
+  scale_fill_brewer(palette = "Paired") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Annual total household income (2019)",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17)) +
+  theme(legend.position = "none")
+
+plot_ethnic <- profiled %>% 
+  count(ethnic) %>% 
+  ggplot2::ggplot(aes(
+    x = n,
+    y = fct_reorder(ethnic, n),
+           fill = ethnic
+    )) +
+  geom_col(stat="identity") +
+  scale_fill_brewer(palette = "Dark2") +
+  geom_text(aes(label = n,
+                hjust = 1.5),
+            color = "white",
+            size = 6
+            ) +
+  theme_bw() +
+  labs(
+    title = "Ethnicity",
+    x = "Frequency",
+    y = ""
+  ) +
+  theme(axis.text.x = element_text(size = 17),
+          axis.text.y = element_text(size = 17)) +
+  theme(legend.position = "none")
+```
+
+```{r out.width="50%"}
+library(patchwork)
+
+plot_income
+
+plot_ethnic
+```
+
